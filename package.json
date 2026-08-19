@@ -1,0 +1,9 @@
+{
+  "name": "inter-site-cartao",
+  "version": "1.0.0",
+  "description": "Site de log de transações Inter + Ingestion API Data Cloud",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inter — Log de Transações | Cartão de Crédito</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --orange: #FF6B00;
+      --orange-dark: #e05e00;
+      --orange-light: #fff3eb;
+      --text-primary: #1a1a1a;
+      --text-secondary: #666;
+      --text-muted: #999;
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --border: #e8e8e8;
+      --green: #00b37e;
+      --red: #f75a68;
+      --blue: #1e6fdf;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo svg { height: 28px; }
+
+    .logo-badge {
+      background: var(--orange);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-nav span {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── SIDEBAR + LAYOUT ── */
+    .layout {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 24px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* ── CARD CLIENT ── */
+    .client-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .client-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 12px;
+    }
+
+    .client-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .client-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), #ff9a44);
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .client-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .client-id {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .client-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .meta-key {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .meta-val {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .badge-one {
+      background: #1a1a1a;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      letter-spacing: .3px;
+    }
+
+    .badge-active {
+      background: #e6faf4;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    /* ── STATS CARD ── */
+    .stats-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .stats-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 14px;
+    }
+
+    .stat-item {
+      margin-bottom: 14px;
+    }
+
+    .stat-item:last-child { margin-bottom: 0; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .stat-value.orange { color: var(--orange); }
+    .stat-value.green  { color: var(--green); }
+
+    .stat-bar-wrap {
+      height: 4px;
+      background: #f0f0f0;
+      border-radius: 2px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .stat-bar {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--orange);
+    }
+
+    /* ── FILTER TAGS ── */
+    .filter-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .filter-card .label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      margin-bottom: 12px;
+    }
+
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .tag {
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #fafafa;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .tag:hover, .tag.active {
+      background: var(--orange);
+      color: #fff;
+      border-color: var(--orange);
+    }
+
+    /* ── MAIN CONTENT ── */
+    .main { display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── PAGE HEADER ── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-outline {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--orange);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* ── SEARCH + CONTROLS ── */
+    .controls-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-wrap {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 38px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .search-input:focus { border-color: var(--orange); }
+
+    .select-ctrl {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      font-size: 13px;
+      color: var(--text-primary);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ── TABLE CARD ── */
+    .table-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .table-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .table-card-title {
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-badge {
+      background: var(--orange-light);
+      color: var(--orange);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: #fafafa;
+      padding: 11px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #f2f2f2;
+      transition: background .1s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fffaf7; }
+
+    td {
+      padding: 13px 16px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    .td-date {
+      color: var(--text-secondary);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .td-card {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .flag-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .flag-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .flag-visa   { background: #1a1f71; }
+    .flag-mc     { background: #eb001b; }
+    .flag-elo    { background: #f4c220; }
+
+    .merchant-name {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .merchant-cat {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .merchant-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .merchant-cell {
+      display: flex;
+      align-items: center;
+    }
+
+    .payment-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .pay-avista {
+      background: #e6faf4;
+      color: var(--green);
+    }
+
+    .pay-prazo {
+      background: #fff3eb;
+      color: var(--orange);
+    }
+
+    .td-value {
+      text-align: right;
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .td-value.debit { color: var(--text-primary); }
+    .td-value.credit { color: var(--green); }
+
+    .installments {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+      display: block;
+      text-align: right;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
+    .status-ok     { background: var(--green); }
+    .status-pend   { background: #f4c220; }
+    .status-cancel { background: var(--red); }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .pag-btns { display: flex; gap: 4px; }
+
+    .pag-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pag-btn.active {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: #fff;
+      margin-top: 16px;
+    }
+
+    footer strong { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <img src="inter_logo.png" style="height:32px;display:block;" alt="Inter" />
+      <span class="logo-badge">Sistema Interno</span>
+    </div>
+    <div class="header-nav">
+      <span>Módulo: <strong>Log de Cartão de Crédito</strong></span>
+      <div style="width:1px;height:20px;background:var(--border);margin:0 8px"></div>
+      <div class="avatar">OP</div>
+    </div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Client Card -->
+    <div class="client-card">
+      <div class="label">Cliente</div>
+      <div class="client-info">
+        <div class="client-avatar">CO</div>
+        <div>
+          <div class="client-name">Conrado Santos</div>
+          <div class="client-id">ID #84721903</div>
+        </div>
+      </div>
+      <div class="client-meta">
+        <div class="meta-row">
+          <span class="meta-key">Conta digital</span>
+          <span class="meta-val">027 / 12847-3</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Produto</span>
+          <span class="badge-one">Inter One</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Bandeira</span>
+          <span class="meta-val">Mastercard</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Cartão</span>
+          <span class="meta-val">•••• •••• •••• 4872</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Status</span>
+          <span class="badge-active">● Ativo</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Limite total</span>
+          <span class="meta-val">R$ 12.000,00</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-key">Disponível</span>
+          <span class="meta-val" style="color:var(--green)">R$ 8.234,15</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-card">
+      <div class="label">Resumo — Agosto/2026</div>
+      <div class="stat-item">
+        <div class="stat-label">Total gasto no período</div>
+        <div class="stat-value orange">R$ 8.463,05</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" style="width:68%"></div></div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Transações aprovadas</div>
+        <div class="stat-value">35</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">À vista</div>
+        <div class="stat-value green">R$ 1.984,40</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Parcelado</div>
+        <div class="stat-value" style="color:var(--orange)">R$ 5.011,55</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-card">
+      <div class="label">Filtrar por categoria</div>
+      <div class="filter-tags">
+        <span class="tag active" onclick="filterCategory(this,'all')">Todos</span>
+        <span class="tag" onclick="filterCategory(this,'alimentacao')">🍔 Alimentação</span>
+        <span class="tag" onclick="filterCategory(this,'supermercado')">🛒 Supermercado</span>
+        <span class="tag" onclick="filterCategory(this,'ecommerce')">🛍️ E-commerce</span>
+        <span class="tag" onclick="filterCategory(this,'esporte')">🏃 Esportes</span>
+        <span class="tag" onclick="filterCategory(this,'mobilidade')">🚗 Mobilidade</span>
+        <span class="tag" onclick="filterCategory(this,'assinatura')">📱 Assinaturas</span>
+        <span class="tag" onclick="filterCategory(this,'farmacia')">💊 Farmácia</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Log de Transações</div>
+        <div class="page-subtitle">Cartão Inter One •••• 4872 &nbsp;·&nbsp; Agosto de 2026</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Exportar CSV
+        </button>
+        <button class="btn-primary" onclick="openModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;vertical-align:middle"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          Novo Evento
+        </button>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input class="search-input" id="searchInput" type="text" placeholder="Buscar estabelecimento, valor..." oninput="filterSearch(this.value)" />
+      </div>
+      <select class="select-ctrl" onchange="filterPayment(this.value)">
+        <option value="all">Todos os pagamentos</option>
+        <option value="avista">À vista</option>
+        <option value="prazo">Parcelado</option>
+      </select>
+      <select class="select-ctrl" onchange="filterStatus(this.value)">
+        <option value="all">Todos os status</option>
+        <option value="aprovada">Aprovada</option>
+        <option value="pendente">Pendente</option>
+        <option value="cancelada">Cancelada</option>
+      </select>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-header">
+        <div class="table-card-title">
+          Transações
+          <span class="count-badge" id="countBadge">25 registros</span>
+        </div>
+        <span style="font-size:12px;color:var(--text-muted)">Atualizado em 19/08/2026 às 09:14</span>
+      </div>
+
+      <table id="txTable">
+        <thead>
+          <tr>
+            <th>Data / Hora</th>
+            <th>Cartão</th>
+            <th>Bandeira</th>
+            <th>Estabelecimento</th>
+            <th>Pagamento</th>
+            <th>Status</th>
+            <th style="text-align:right">Valor</th>
+          </tr>
+        </thead>
+        <tbody id="txBody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+
+      <div class="pagination">
+        <span id="paginfoLabel">Exibindo 1–25 de 25 registros</span>
+        <div class="pag-btns">
+          <button class="pag-btn">‹</button>
+          <button class="pag-btn active">1</button>
+          <button class="pag-btn">›</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer>
+  <strong>Inter</strong> &nbsp;·&nbsp; Sistema Interno de Gestão de Risco &nbsp;·&nbsp; Módulo: Logs de Cartão de Crédito
+  &nbsp;·&nbsp; Ambiente: <strong>PROD</strong> &nbsp;·&nbsp; Acesso restrito — uso exclusivo Inter S.A.
+</footer>
+
+<script>
+  const transactions = [
+    { date:'20/08/2026','time':'20:47','card':'•••• 4872','flag':'Mastercard','merchant':'Sephora','cat':'ecommerce','icon':'🌸','catLabel':'Beleza','payment':'avista','parcelas':null,'status':'aprovada','value':349.00},
+    { date:'19/08/2026','time':'14:22','card':'•••• 4872','flag':'Mastercard','merchant':'Track&Field — On Running','cat':'esporte','icon':'👟','catLabel':'Esportes','payment':'prazo','parcelas':'6x R$ 283,17','status':'aprovada','value':1699.00},
+    { date:'19/08/2026','time':'08:47','card':'•••• 4872','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Delivery','payment':'avista','parcelas':null,'status':'aprovada','value':62.90},
+    { date:'18/08/2026','time':'20:13','card':'•••• 4872','flag':'Mastercard','merchant':'Spotify','cat':'assinatura','icon':'🎵','catLabel':'Assinatura','payment':'avista','parcelas':null,'status':'aprovada','value':21.90},
+    { date:'18/08/2026','time':'14:30','card':'•••• 4872','flag':'Mastercard','merchant':'Pão de Açúcar','cat':'supermercado','icon':'🛒','catLabel':'Supermercado','payment':'avista','parcelas':null,'status':'aprovada','value':213.45},
+    { date:'18/08/2026','time':'11:30','card':'•••• 4872','flag':'Mastercard','merchant':'Netshoes','cat':'esporte','icon':'🏃','catLabel':'Esportes','payment':'avista','parcelas':null,'status':'aprovada','value':189.90},
+    { date:'17/08/2026','time':'19:55','card':'•••• 4872','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Mobilidade','payment':'avista','parcelas':null,'status':'aprovada','value':34.70},
+    { date:'17/08/2026','time':'13:02','card':'•••• 4872','flag':'Mastercard','merchant':'Amazon','cat':'ecommerce','icon':'📦','catLabel':'E-commerce','payment':'prazo','parcelas':'3x R$ 76,60','status':'aprovada','value':229.80},
+    { date:'16/08/2026','time':'21:18','card':'•••• 4872','flag':'Mastercard','merchant':'Netflix','cat':'assinatura','icon':'🎬','catLabel':'Assinatura','payment':'avista','parcelas':null,'status':'aprovada','value':55.90},
+    { date:'16/08/2026','time':'12:44','card':'•••• 4872','flag':'Mastercard','merchant':'Restaurante Taiyo','cat':'alimentacao','icon':'🍣','catLabel':'Restaurante','payment':'avista','parcelas':null,'status':'aprovada','value':118.00},
+    { date:'16/08/2026','time':'09:15','card':'•••• 4872','flag':'Mastercard','merchant':'Decathlon','cat':'esporte','icon':'🏋️','catLabel':'Esportes','payment':'avista','parcelas':null,'status':'aprovada','value':347.50},
+    { date:'15/08/2026','time':'18:30','card':'•••• 4872','flag':'Mastercard','merchant':'Shell — Posto km 12','cat':'mobilidade','icon':'⛽','catLabel':'Combustível','payment':'avista','parcelas':null,'status':'aprovada','value':280.00},
+    { date:'15/08/2026','time':'10:05','card':'•••• 4872','flag':'Mastercard','merchant':'Farmácia São João','cat':'farmacia','icon':'💊','catLabel':'Farmácia','payment':'avista','parcelas':null,'status':'aprovada','value':87.30},
+    { date:'14/08/2026','time':'22:01','card':'•••• 4872','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Delivery','payment':'avista','parcelas':null,'status':'aprovada','value':47.50},
+    { date:'14/08/2026','time':'17:40','card':'•••• 4872','flag':'Mastercard','merchant':'Centauro','cat':'esporte','icon':'⚽','catLabel':'Esportes','payment':'prazo','parcelas':'2x R$ 124,95','status':'aprovada','value':249.90},
+    { date:'14/08/2026','time':'15:20','card':'•••• 4872','flag':'Mastercard','merchant':'Mercado Livre','cat':'ecommerce','icon':'🟡','catLabel':'E-commerce','payment':'prazo','parcelas':'6x R$ 89,83','status':'aprovada','value':538.98},
+    { date:'13/08/2026','time':'20:45','card':'•••• 4872','flag':'Mastercard','merchant':'Outback Steakhouse','cat':'alimentacao','icon':'🥩','catLabel':'Restaurante','payment':'avista','parcelas':null,'status':'aprovada','value':195.40},
+    { date:'13/08/2026','time':'09:30','card':'•••• 4872','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Mobilidade','payment':'avista','parcelas':null,'status':'aprovada','value':28.90},
+    { date:'13/08/2026','time':'08:05','card':'•••• 4872','flag':'Mastercard','merchant':'Garmin Store','cat':'esporte','icon':'⌚','catLabel':'Esportes','payment':'prazo','parcelas':'3x R$ 233,00','status':'aprovada','value':699.00},
+    { date:'12/08/2026','time':'16:00','card':'•••• 4872','flag':'Mastercard','merchant':'Droga Raia','cat':'farmacia','icon':'💊','catLabel':'Farmácia','payment':'avista','parcelas':null,'status':'aprovada','value':54.75},
+    { date:'12/08/2026','time':'11:15','card':'•••• 4872','flag':'Mastercard','merchant':'Carrefour','cat':'supermercado','icon':'🛒','catLabel':'Supermercado','payment':'avista','parcelas':null,'status':'aprovada','value':167.80},
+    { date:'11/08/2026','time':'19:20','card':'•••• 4872','flag':'Mastercard','merchant':'99 Táxi','cat':'mobilidade','icon':'🚕','catLabel':'Mobilidade','payment':'avista','parcelas':null,'status':'cancelada','value':22.00},
+    { date:'11/08/2026','time':'16:20','card':'•••• 4872','flag':'Mastercard','merchant':'Adidas Store','cat':'esporte','icon':'🎽','catLabel':'Esportes','payment':'avista','parcelas':null,'status':'aprovada','value':419.00},
+    { date:'11/08/2026','time':'14:50','card':'•••• 4872','flag':'Mastercard','merchant':'Magazine Luiza','cat':'ecommerce','icon':'🛍️','catLabel':'E-commerce','payment':'prazo','parcelas':'12x R$ 49,90','status':'aprovada','value':598.80},
+    { date:'10/08/2026','time':'20:30','card':'•••• 4872','flag':'Mastercard','merchant':'Rappi','cat':'alimentacao','icon':'🛵','catLabel':'Delivery','payment':'avista','parcelas':null,'status':'aprovada','value':73.20},
+    { date:'10/08/2026','time':'08:00','card':'•••• 4872','flag':'Mastercard','merchant':'Ipiranga — Posto Central','cat':'mobilidade','icon':'⛽','catLabel':'Combustível','payment':'avista','parcelas':null,'status':'aprovada','value':310.00},
+    { date:'09/08/2026','time':'17:10','card':'•••• 4872','flag':'Mastercard','merchant':'HBO Max','cat':'assinatura','icon':'📺','catLabel':'Assinatura','payment':'avista','parcelas':null,'status':'aprovada','value':34.90},
+    { date:'09/08/2026','time':'13:00','card':'•••• 4872','flag':'Mastercard','merchant':'Hortifruti','cat':'supermercado','icon':'🥦','catLabel':'Hortifruti','payment':'avista','parcelas':null,'status':'aprovada','value':89.60},
+    { date:'09/08/2026','time':'10:50','card':'•••• 4872','flag':'Mastercard','merchant':'Mundo Corrida','cat':'esporte','icon':'🏅','catLabel':'Esportes','payment':'avista','parcelas':null,'status':'aprovada','value':138.00},
+    { date:'08/08/2026','time':'21:45','card':'•••• 4872','flag':'Mastercard','merchant':'Cine Ritz','cat':'alimentacao','icon':'🎟️','catLabel':'Lazer','payment':'avista','parcelas':null,'status':'aprovada','value':52.00},
+    { date:'07/08/2026','time':'15:35','card':'•••• 4872','flag':'Mastercard','merchant':'GEL Running','cat':'esporte','icon':'💧','catLabel':'Esportes','payment':'avista','parcelas':null,'status':'aprovada','value':76.80},
+    { date:'07/08/2026','time':'10:20','card':'•••• 4872','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Delivery','payment':'avista','parcelas':null,'status':'pendente','value':41.90},
+    { date:'06/08/2026','time':'15:55','card':'•••• 4872','flag':'Mastercard','merchant':'Apple Store','cat':'ecommerce','icon':'🍎','catLabel':'E-commerce','payment':'prazo','parcelas':'10x R$ 41,49','status':'aprovada','value':414.90},
+    { date:'05/08/2026','time':'19:00','card':'•••• 4872','flag':'Mastercard','merchant':'Outback Steakhouse','cat':'alimentacao','icon':'🥩','catLabel':'Restaurante','payment':'avista','parcelas':null,'status':'aprovada','value':150.83},
+    { date:'05/08/2026','time':'12:10','card':'•••• 4872','flag':'Mastercard','merchant':'Nike Store','cat':'esporte','icon':'✔️','catLabel':'Esportes','payment':'prazo','parcelas':'2x R$ 264,50','status':'aprovada','value':529.00},
+  ];
+
+  let filtered = [...transactions];
+
+  function statusBadge(s) {
+    if(s==='aprovada') return '<span class="status-dot status-ok"></span>Aprovada';
+    if(s==='pendente') return '<span class="status-dot status-pend"></span>Pendente';
+    return '<span class="status-dot status-cancel"></span>Cancelada';
+  }
+
+  function flagBadge(f) {
+    const color = f==='Visa'?'flag-visa':f==='Elo'?'flag-elo':'flag-mc';
+    return `<span class="flag-icon"><span class="flag-dot ${color}"></span>${f}</span>`;
+  }
+
+  function renderRows(data) {
+    const tbody = document.getElementById('txBody');
+    tbody.innerHTML = '';
+    data.forEach(tx => {
+      const payBadge = tx.payment==='avista'
+        ? '<span class="payment-badge pay-avista">À vista</span>'
+        : `<span class="payment-badge pay-prazo">Parcelado</span>`;
+      const parcInfo = tx.parcelas ? `<span class="installments">${tx.parcelas}</span>` : '';
+      const valClass = tx.status==='cancelada' ? 'credit' : 'debit';
+      const valStr = `R$ ${tx.value.toFixed(2).replace('.',',')}`;
+      tbody.innerHTML += `
+        <tr class="tx-row" data-cat="${tx.cat}" data-payment="${tx.payment}" data-status="${tx.status}">
+          <td class="td-date">${tx.date}<br><span style="color:var(--text-muted)">${tx.time}</span></td>
+          <td class="td-card">${tx.card}</td>
+          <td>${flagBadge(tx.flag)}</td>
+          <td>
+            <div class="merchant-cell">
+              <span class="merchant-icon">${tx.icon}</span>
+              <div>
+                <div class="merchant-name">${tx.merchant}</div>
+                <div class="merchant-cat">${tx.catLabel}</div>
+              </div>
+            </div>
+          </td>
+          <td>${payBadge}${parcInfo}</td>
+          <td>${statusBadge(tx.status)}</td>
+          <td class="td-value ${valClass}">${valStr}${parcInfo}</td>
+        </tr>`;
+    });
+    document.getElementById('countBadge').textContent = data.length + ' registros';
+    document.getElementById('paginfoLabel').textContent = `Exibindo 1–${data.length} de ${data.length} registros`;
+  }
+
+  let activeCat = 'all', activePayment = 'all', activeStatus = 'all', searchVal = '';
+
+  function applyFilters() {
+    filtered = transactions.filter(tx => {
+      const catOk  = activeCat === 'all' || tx.cat === activeCat;
+      const payOk  = activePayment === 'all' || tx.payment === activePayment;
+      const stOk   = activeStatus === 'all' || tx.status === activeStatus;
+      const srchOk = !searchVal || tx.merchant.toLowerCase().includes(searchVal.toLowerCase()) || tx.value.toFixed(2).includes(searchVal);
+      return catOk && payOk && stOk && srchOk;
+    });
+    renderRows(filtered);
+  }
+
+  function filterCategory(el, cat) {
+    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    activeCat = cat;
+    applyFilters();
+  }
+
+  function filterPayment(val) { activePayment = val; applyFilters(); }
+  function filterStatus(val)  { activeStatus  = val; applyFilters(); }
+  function filterSearch(val)  { searchVal = val; applyFilters(); }
+
+  renderRows(transactions);
+</script>
+
+<!-- ── MODAL NOVO EVENTO ── -->
+<div id="eventModal" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;" onclick="handleOverlayClick(event)">
+  <div style="background:#fff;border-radius:20px;padding:32px;width:100%;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.2);position:relative;" onclick="event.stopPropagation()">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="font-size:17px;font-weight:700;color:#1a1a1a">Novo Evento de Compra</div>
+        <div style="font-size:12px;color:#999;margin-top:2px">Cartão •••• 4872 · Conrado Santos</div>
+      </div>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:#999;font-size:20px;line-height:1;padding:4px">✕</button>
+    </div>
+
+    <!-- Fields -->
+    <div style="display:flex;flex-direction:column;gap:14px;">
+
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:5px">Estabelecimento</label>
+        <input id="ev_merchant" type="text" placeholder="Ex: Amazon, iFood, Mercado Livre..." style="width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;transition:border-color .15s;box-sizing:border-box" onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#e8e8e8'" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:5px">Categoria</label>
+        <select id="ev_cat" style="width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;background:#fff;cursor:pointer;box-sizing:border-box" onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#e8e8e8'">
+          <option value="">Selecione...</option>
+          <option value="alimentacao">🍔 Alimentação / Delivery</option>
+          <option value="supermercado">🛒 Supermercado</option>
+          <option value="ecommerce">🛍️ E-commerce</option>
+          <option value="esporte">🏃 Esportes</option>
+          <option value="mobilidade">🚗 Mobilidade</option>
+          <option value="assinatura">📱 Assinaturas</option>
+          <option value="farmacia">💊 Farmácia</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:5px">Valor (R$)</label>
+        <input id="ev_value" type="number" min="0.01" step="0.01" placeholder="0,00" style="width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#e8e8e8'" />
+      </div>
+
+      <div>
+        <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:5px">Modo de Pagamento</label>
+        <div style="display:flex;gap:10px;">
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e8e8e8;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s" id="lbl_avista">
+            <input type="radio" name="ev_payment" value="avista" onchange="togglePayment('avista')" style="accent-color:#FF6B00"> À vista
+          </label>
+          <label style="flex:1;display:flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px solid #e8e8e8;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;transition:all .15s" id="lbl_prazo">
+            <input type="radio" name="ev_payment" value="prazo" onchange="togglePayment('prazo')" style="accent-color:#FF6B00"> Parcelado
+          </label>
+        </div>
+      </div>
+
+      <!-- Installments preview -->
+      <div id="ev_parcelas_preview" style="display:none;background:#fff3eb;border-radius:10px;padding:12px 14px;">
+        <div style="font-size:12px;color:#FF6B00;font-weight:600" id="ev_parcelas_text"></div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div style="display:flex;gap:10px;margin-top:24px;">
+      <button onclick="closeModal()" style="flex:1;padding:12px;background:#f5f5f5;border:none;border-radius:10px;font-size:14px;font-weight:600;color:#666;cursor:pointer">Cancelar</button>
+      <button onclick="submitEvent()" id="btn_submit" style="flex:2;padding:12px;background:#FF6B00;border:none;border-radius:10px;font-size:14px;font-weight:700;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg>
+        Enviar ao Data Cloud
+      </button>
+    </div>
+
+    <!-- Status msg -->
+    <div id="ev_status" style="display:none;margin-top:14px;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:600;text-align:center"></div>
+  </div>
+</div>
+
+<script>
+  // ── Modal controls ──
+  function openModal() {
+    document.getElementById('eventModal').style.display = 'flex';
+    document.getElementById('ev_merchant').value = '';
+    document.getElementById('ev_cat').value = '';
+    document.getElementById('ev_value').value = '';
+    document.querySelectorAll('input[name="ev_payment"]').forEach(r => r.checked = false);
+    document.getElementById('ev_parcelas_preview').style.display = 'none';
+    document.getElementById('ev_status').style.display = 'none';
+    ['lbl_avista','lbl_prazo'].forEach(id => {
+      document.getElementById(id).style.borderColor = '#e8e8e8';
+      document.getElementById(id).style.background = '#fff';
+    });
+  }
+
+  function closeModal() {
+    document.getElementById('eventModal').style.display = 'none';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('eventModal')) closeModal();
+  }
+
+  function togglePayment(type) {
+    ['avista','prazo'].forEach(t => {
+      const lbl = document.getElementById('lbl_' + t);
+      lbl.style.borderColor = t === type ? '#FF6B00' : '#e8e8e8';
+      lbl.style.background  = t === type ? '#fff3eb' : '#fff';
+    });
+    updateParcelasPreview();
+  }
+
+  function updateParcelasPreview() {
+    const payment = document.querySelector('input[name="ev_payment"]:checked');
+    const value   = parseFloat(document.getElementById('ev_value').value);
+    const preview = document.getElementById('ev_parcelas_preview');
+    const text    = document.getElementById('ev_parcelas_text');
+
+    if (payment && payment.value === 'prazo' && value > 0) {
+      const n = Math.floor(Math.random() * 10) + 2; // 2 a 11 parcelas
+      const installment = (value / n).toFixed(2).replace('.', ',');
+      text.textContent = n + 'x de R$ ' + installment + ' (sem juros)';
+      preview.style.display = 'block';
+      preview.dataset.n = n;
+    } else {
+      preview.style.display = 'none';
+    }
+  }
+
+  document.getElementById('ev_value').addEventListener('input', updateParcelasPreview);
+
+  // ── Submit ──
+  async function submitEvent() {
+    const merchant = document.getElementById('ev_merchant').value.trim();
+    const cat      = document.getElementById('ev_cat').value;
+    const value    = parseFloat(document.getElementById('ev_value').value);
+    const payment  = document.querySelector('input[name="ev_payment"]:checked');
+    const status   = document.getElementById('ev_status');
+    const btn      = document.getElementById('btn_submit');
+
+    if (!merchant || !cat || !value || !payment) {
+      showStatus('⚠️ Preencha todos os campos.', '#fff3eb', '#FF6B00');
+      return;
+    }
+
+    const now       = new Date();
+    const dateStr   = now.toLocaleDateString('pt-BR');
+    const timeStr   = now.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+    const isParc    = payment.value === 'prazo';
+    const preview   = document.getElementById('ev_parcelas_preview');
+    const n         = isParc ? parseInt(preview.dataset.n) : null;
+    const parcStr   = isParc ? n + 'x R$ ' + (value / n).toFixed(2).replace('.', ',') : null;
+
+    const catIcons = {alimentacao:'🍔',supermercado:'🛒',ecommerce:'🛍️',esporte:'🏃',mobilidade:'🚗',assinatura:'📱',farmacia:'💊'};
+    const catLabels = {alimentacao:'Alimentação',supermercado:'Supermercado',ecommerce:'E-commerce',esporte:'Esportes',mobilidade:'Mobilidade',assinatura:'Assinatura',farmacia:'Farmácia'};
+
+    // Payload para a Ingestion API
+    const payload = {
+      transaction_id:       crypto.randomUUID(),
+      individual_id:        '84721903',
+      nome_cliente:         'Conrado Santos',
+      numero_conta:         '027 / 12847-3',
+      produto_cartao:       'Inter One',
+      numero_cartao_mascara:'•••• 4872',
+      bandeira:             'Mastercard',
+      event_timestamp:      now.toISOString(),
+      estabelecimento:      merchant,
+      categoria:            catLabels[cat] || cat,
+      modo_pagamento:       isParc ? 'parcelado' : 'avista',
+      parcelas:             n,
+      valor_parcela:        isParc ? parseFloat((value / n).toFixed(2)) : null,
+      valor_total:          value,
+      status_transacao:     'aprovada'
+    };
+
+    // Loading state
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Enviando...';
+
+    try {
+      // Chama o endpoint Vercel (serverless function)
+      const res = await fetch('/api/ingest', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        // Adiciona linha na tabela
+        transactions.unshift({
+          date: dateStr, time: timeStr,
+          card: '•••• 4872', flag: 'Mastercard',
+          merchant, cat, icon: catIcons[cat] || '🛍️',
+          catLabel: catLabels[cat] || cat,
+          payment: payment.value,
+          parcelas: parcStr,
+          status: 'aprovada',
+          value
+        });
+        applyFilters();
+        showStatus('✅ Evento enviado ao Data Cloud com sucesso!', '#e6faf4', '#00b37e');
+        setTimeout(closeModal, 1800);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showStatus('❌ Erro ' + res.status + ': ' + (err.message || 'Falha no envio.'), '#fef2f2', '#f75a68');
+      }
+    } catch (e) {
+      // Fallback: se não há backend ainda, adiciona localmente mesmo assim
+      transactions.unshift({
+        date: dateStr, time: timeStr,
+        card: '•••• 4872', flag: 'Mastercard',
+        merchant, cat, icon: catIcons[cat] || '🛍️',
+        catLabel: catLabels[cat] || cat,
+        payment: payment.value,
+        parcelas: parcStr,
+        status: 'aprovada',
+        value
+      });
+      applyFilters();
+      showStatus('⚠️ Backend não configurado — evento registrado localmente.', '#fff3eb', '#FF6B00');
+      setTimeout(closeModal, 2200);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 20-7z"/></svg> Enviar ao Data Cloud';
+    }
+  }
+
+  function showStatus(msg, bg, color) {
+    const el = document.getElementById('ev_status');
+    el.style.display = 'block';
+    el.style.background = bg;
+    el.style.color = color;
+    el.textContent = msg;
+  }
+</script>
+
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>
