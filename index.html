@@ -632,12 +632,21 @@
 
     <!-- Client Card -->
     <div class="client-card">
-      <div class="label">Cliente</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="label" style="margin-bottom:0">Cliente</div>
+        <select id="personaSelector" onchange="switchPersona(this.value)" style="font-size:11px;font-weight:600;color:#FF6B00;background:#fff3eb;border:1.5px solid #FF6B00;border-radius:8px;padding:4px 8px;cursor:pointer;outline:none;">
+          <option value="conrado">Conrado Santos</option>
+          <option value="fernanda">Fernanda Albuquerque</option>
+          <option value="rodrigo">Rodrigo Teixeira</option>
+          <option value="juliana">Juliana Marques</option>
+          <option value="eduardo">Eduardo Cavalcanti</option>
+        </select>
+      </div>
       <div class="client-info">
-        <div class="client-avatar">CO</div>
+        <div class="client-avatar" id="clientAvatar">CO</div>
         <div>
-          <div class="client-name">Conrado Santos</div>
-          <div class="client-id">ID #84721903</div>
+          <div class="client-name" id="clientName">Conrado Santos</div>
+          <div class="client-id" id="clientId">ID #84721903</div>
         </div>
       </div>
       <div class="client-meta">
@@ -794,7 +803,61 @@
 </footer>
 
 <script>
-  const transactions = [
+  // ── Personas ──
+  const personas = {
+    conrado: {
+      id: '003Ws00000Q4nxFIAR',
+      nome: 'Conrado Santos',
+      initials: 'CO',
+      conta: '027 / 12847-3',
+      cartao: '•••• 4872',
+      limite: 'R$ 12.000,00',
+      disponivel: 'R$ 8.234,15',
+    },
+    fernanda: {
+      id: '003Ws00000Q4nw7IAB',
+      nome: 'Fernanda Albuquerque',
+      initials: 'FA',
+      conta: '027 / 29341-7',
+      cartao: '•••• 3291',
+      limite: 'R$ 15.000,00',
+      disponivel: 'R$ 11.420,50',
+    },
+    rodrigo: {
+      id: '003Ws00000V7KD4IAN',
+      nome: 'Rodrigo Teixeira',
+      initials: 'RT',
+      conta: '027 / 45872-1',
+      cartao: '•••• 7754',
+      limite: 'R$ 8.000,00',
+      disponivel: 'R$ 5.130,00',
+    },
+    juliana: {
+      id: '003Ws00000YPJgdIAH',
+      nome: 'Juliana Marques',
+      initials: 'JM',
+      conta: '027 / 61293-5',
+      cartao: '•••• 9043',
+      limite: 'R$ 20.000,00',
+      disponivel: 'R$ 14.870,80',
+    },
+    eduardo: {
+      id: '003Ws00000YPSIUIA5',
+      nome: 'Eduardo Cavalcanti',
+      initials: 'EC',
+      conta: '027 / 78410-9',
+      cartao: '•••• 6618',
+      limite: 'R$ 10.000,00',
+      disponivel: 'R$ 6.990,25',
+    },
+  };
+
+  let currentPersonaKey = 'conrado';
+  let currentPersona = personas.conrado;
+
+  // Transações por persona
+  const allTransactions = {
+    conrado: [
     { date:'20/08/2026','time':'20:47','card':'•••• 4872','flag':'Mastercard','merchant':'Sephora','cat':'ecommerce','icon':'🌸','catLabel':'Beleza','payment':'avista','parcelas':null,'status':'aprovada','value':349.00},
     { date:'19/08/2026','time':'14:22','card':'•••• 4872','flag':'Mastercard','merchant':'Track&Field — On Running','cat':'esporte','icon':'👟','catLabel':'Esporte & Fitness','payment':'prazo','parcelas':'6x R$ 283,17','status':'aprovada','value':1699.00},
     { date:'19/08/2026','time':'08:47','card':'•••• 4872','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':62.90},
@@ -830,8 +893,78 @@
     { date:'06/08/2026','time':'15:55','card':'•••• 4872','flag':'Mastercard','merchant':'Apple Store','cat':'ecommerce','icon':'🍎','catLabel':'Eletrônicos','payment':'prazo','parcelas':'10x R$ 41,49','status':'aprovada','value':414.90},
     { date:'05/08/2026','time':'19:00','card':'•••• 4872','flag':'Mastercard','merchant':'Outback Steakhouse','cat':'alimentacao','icon':'🥩','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':150.83},
     { date:'05/08/2026','time':'12:10','card':'•••• 4872','flag':'Mastercard','merchant':'Nike Store','cat':'esporte','icon':'✔️','catLabel':'Esporte & Fitness','payment':'prazo','parcelas':'2x R$ 264,50','status':'aprovada','value':529.00},
-  ];
+  ],
+  fernanda: [
+    { date:'19/08/2026','time':'18:30','card':'•••• 3291','flag':'Mastercard','merchant':'Zara','cat':'ecommerce','icon':'👗','catLabel':'Eletrônicos','payment':'prazo','parcelas':'3x R$ 199,67','status':'aprovada','value':599.00},
+    { date:'18/08/2026','time':'12:15','card':'•••• 3291','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':54.90},
+    { date:'17/08/2026','time':'21:00','card':'•••• 3291','flag':'Mastercard','merchant':'Netflix','cat':'assinatura','icon':'🎬','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':55.90},
+    { date:'16/08/2026','time':'10:40','card':'•••• 3291','flag':'Mastercard','merchant':'Pão de Açúcar','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':187.30},
+    { date:'15/08/2026','time':'19:20','card':'•••• 3291','flag':'Mastercard','merchant':'Sephora','cat':'ecommerce','icon':'🌸','catLabel':'Beleza','payment':'avista','parcelas':null,'status':'aprovada','value':298.00},
+    { date:'14/08/2026','time':'13:50','card':'•••• 3291','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':29.50},
+    { date:'13/08/2026','time':'20:10','card':'•••• 3291','flag':'Mastercard','merchant':'Amazon','cat':'ecommerce','icon':'📦','catLabel':'Eletrônicos','payment':'prazo','parcelas':'6x R$ 83,15','status':'aprovada','value':498.90},
+    { date:'12/08/2026','time':'11:30','card':'•••• 3291','flag':'Mastercard','merchant':'Droga Raia','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':76.40},
+    { date:'11/08/2026','time':'17:00','card':'•••• 3291','flag':'Mastercard','merchant':'Spotify','cat':'assinatura','icon':'🎵','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':21.90},
+    { date:'10/08/2026','time':'09:45','card':'•••• 3291','flag':'Mastercard','merchant':'Renner','cat':'ecommerce','icon':'👔','catLabel':'Eletrônicos','payment':'prazo','parcelas':'2x R$ 149,50','status':'aprovada','value':299.00},
+    { date:'09/08/2026','time':'15:20','card':'•••• 3291','flag':'Mastercard','merchant':'Carrefour','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':142.60},
+    { date:'08/08/2026','time':'21:30','card':'•••• 3291','flag':'Mastercard','merchant':'Rappi','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':67.80},
+    { date:'07/08/2026','time':'14:00','card':'•••• 3291','flag':'Mastercard','merchant':'Farmácia São João','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':93.20},
+    { date:'06/08/2026','time':'10:15','card':'•••• 3291','flag':'Mastercard','merchant':'Magazine Luiza','cat':'ecommerce','icon':'🛍️','catLabel':'Eletrônicos','payment':'prazo','parcelas':'4x R$ 87,25','status':'aprovada','value':349.00},
+    { date:'05/08/2026','time':'19:45','card':'•••• 3291','flag':'Mastercard','merchant':'99 Táxi','cat':'mobilidade','icon':'🚕','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':18.90},
+  ],
+  rodrigo: [
+    { date:'19/08/2026','time':'07:30','card':'•••• 7754','flag':'Mastercard','merchant':'Shell — Posto km 12','cat':'mobilidade','icon':'⛽','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':320.00},
+    { date:'18/08/2026','time':'12:00','card':'•••• 7754','flag':'Mastercard','merchant':'McDonald\'s','cat':'alimentacao','icon':'🍔','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':48.70},
+    { date:'17/08/2026','time':'20:00','card':'•••• 7754','flag':'Mastercard','merchant':'Steam','cat':'assinatura','icon':'🎮','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':89.90},
+    { date:'16/08/2026','time':'11:20','card':'•••• 7754','flag':'Mastercard','merchant':'Decathlon','cat':'esporte','icon':'🏋️','catLabel':'Esporte & Fitness','payment':'avista','parcelas':null,'status':'aprovada','value':215.00},
+    { date:'15/08/2026','time':'18:45','card':'•••• 7754','flag':'Mastercard','merchant':'Extra Supermercado','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':198.40},
+    { date:'14/08/2026','time':'09:10','card':'•••• 7754','flag':'Mastercard','merchant':'Ipiranga — Posto Central','cat':'mobilidade','icon':'⛽','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':285.00},
+    { date:'13/08/2026','time':'21:30','card':'•••• 7754','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':71.30},
+    { date:'12/08/2026','time':'15:00','card':'•••• 7754','flag':'Mastercard','merchant':'Mercado Livre','cat':'ecommerce','icon':'🟡','catLabel':'Eletrônicos','payment':'prazo','parcelas':'3x R$ 99,97','status':'aprovada','value':299.90},
+    { date:'11/08/2026','time':'08:20','card':'•••• 7754','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':22.40},
+    { date:'10/08/2026','time':'19:00','card':'•••• 7754','flag':'Mastercard','merchant':'HBO Max','cat':'assinatura','icon':'📺','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':34.90},
+    { date:'09/08/2026','time':'13:40','card':'•••• 7754','flag':'Mastercard','merchant':'Droga Raia','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':61.50},
+    { date:'08/08/2026','time':'17:30','card':'•••• 7754','flag':'Mastercard','merchant':'Nike Store','cat':'esporte','icon':'✔️','catLabel':'Esporte & Fitness','payment':'prazo','parcelas':'2x R$ 189,50','status':'aprovada','value':379.00},
+    { date:'07/08/2026','time':'11:00','card':'•••• 7754','flag':'Mastercard','merchant':'Hortifruti','cat':'supermercado','icon':'🥦','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':74.20},
+    { date:'06/08/2026','time':'20:15','card':'•••• 7754','flag':'Mastercard','merchant':'Outback Steakhouse','cat':'alimentacao','icon':'🥩','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':178.60},
+    { date:'05/08/2026','time':'10:30','card':'•••• 7754','flag':'Mastercard','merchant':'Amazon','cat':'ecommerce','icon':'📦','catLabel':'Eletrônicos','payment':'prazo','parcelas':'6x R$ 66,50','status':'aprovada','value':399.00},
+  ],
+  juliana: [
+    { date:'20/08/2026','time':'15:10','card':'•••• 9043','flag':'Mastercard','merchant':'Livraria Cultura','cat':'ecommerce','icon':'📚','catLabel':'Eletrônicos','payment':'avista','parcelas':null,'status':'aprovada','value':189.90},
+    { date:'19/08/2026','time':'09:30','card':'•••• 9043','flag':'Mastercard','merchant':'Pão de Açúcar','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':243.70},
+    { date:'18/08/2026','time':'19:45','card':'•••• 9043','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':31.20},
+    { date:'17/08/2026','time':'12:00','card':'•••• 9043','flag':'Mastercard','merchant':'Amazon','cat':'ecommerce','icon':'📦','catLabel':'Eletrônicos','payment':'prazo','parcelas':'12x R$ 124,92','status':'aprovada','value':1499.00},
+    { date:'16/08/2026','time':'20:30','card':'•••• 9043','flag':'Mastercard','merchant':'Spotify','cat':'assinatura','icon':'🎵','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':21.90},
+    { date:'15/08/2026','time':'11:15','card':'•••• 9043','flag':'Mastercard','merchant':'Farmácia São João','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':112.40},
+    { date:'14/08/2026','time':'14:00','card':'•••• 9043','flag':'Mastercard','merchant':'Restaurante Taiyo','cat':'alimentacao','icon':'🍣','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':134.00},
+    { date:'13/08/2026','time':'10:00','card':'•••• 9043','flag':'Mastercard','merchant':'Apple Store','cat':'ecommerce','icon':'🍎','catLabel':'Eletrônicos','payment':'prazo','parcelas':'10x R$ 89,90','status':'aprovada','value':899.00},
+    { date:'12/08/2026','time':'21:00','card':'•••• 9043','flag':'Mastercard','merchant':'Netflix','cat':'assinatura','icon':'🎬','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':55.90},
+    { date:'11/08/2026','time':'17:30','card':'•••• 9043','flag':'Mastercard','merchant':'Carrefour','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':176.80},
+    { date:'10/08/2026','time':'13:20','card':'•••• 9043','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':58.40},
+    { date:'09/08/2026','time':'16:40','card':'•••• 9043','flag':'Mastercard','merchant':'Sephora','cat':'ecommerce','icon':'🌸','catLabel':'Beleza','payment':'prazo','parcelas':'2x R$ 224,50','status':'aprovada','value':449.00},
+    { date:'08/08/2026','time':'09:00','card':'•••• 9043','flag':'Mastercard','merchant':'99 Táxi','cat':'mobilidade','icon':'🚕','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':27.60},
+    { date:'07/08/2026','time':'19:00','card':'•••• 9043','flag':'Mastercard','merchant':'HBO Max','cat':'assinatura','icon':'📺','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':34.90},
+    { date:'06/08/2026','time':'11:30','card':'•••• 9043','flag':'Mastercard','merchant':'Droga Raia','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':84.30},
+  ],
+  eduardo: [
+    { date:'19/08/2026','time':'08:00','card':'•••• 6618','flag':'Mastercard','merchant':'Ipiranga — Posto Central','cat':'mobilidade','icon':'⛽','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':410.00},
+    { date:'18/08/2026','time':'13:30','card':'•••• 6618','flag':'Mastercard','merchant':'iFood','cat':'alimentacao','icon':'🛵','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':79.90},
+    { date:'17/08/2026','time':'20:45','card':'•••• 6618','flag':'Mastercard','merchant':'Amazon','cat':'ecommerce','icon':'📦','catLabel':'Eletrônicos','payment':'prazo','parcelas':'6x R$ 116,50','status':'aprovada','value':699.00},
+    { date:'16/08/2026','time':'10:00','card':'•••• 6618','flag':'Mastercard','merchant':'Extra Supermercado','cat':'supermercado','icon':'🛒','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':221.50},
+    { date:'15/08/2026','time':'19:30','card':'•••• 6618','flag':'Mastercard','merchant':'Centauro','cat':'esporte','icon':'⚽','catLabel':'Esporte & Fitness','payment':'prazo','parcelas':'3x R$ 116,63','status':'aprovada','value':349.90},
+    { date:'14/08/2026','time':'12:00','card':'•••• 6618','flag':'Mastercard','merchant':'Netflix','cat':'assinatura','icon':'🎬','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':55.90},
+    { date:'13/08/2026','time':'21:00','card':'•••• 6618','flag':'Mastercard','merchant':'Outback Steakhouse','cat':'alimentacao','icon':'🥩','catLabel':'Gourmet & Vinhos','payment':'avista','parcelas':null,'status':'aprovada','value':215.80},
+    { date:'12/08/2026','time':'08:30','card':'•••• 6618','flag':'Mastercard','merchant':'Shell — Posto km 12','cat':'mobilidade','icon':'⛽','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':290.00},
+    { date:'11/08/2026','time':'15:00','card':'•••• 6618','flag':'Mastercard','merchant':'Droga Raia','cat':'farmacia','icon':'💊','catLabel':'Saúde & Bem-estar','payment':'avista','parcelas':null,'status':'aprovada','value':68.90},
+    { date:'10/08/2026','time':'18:20','card':'•••• 6618','flag':'Mastercard','merchant':'Adidas Store','cat':'esporte','icon':'🎽','catLabel':'Esporte & Fitness','payment':'avista','parcelas':null,'status':'aprovada','value':389.00},
+    { date:'09/08/2026','time':'11:40','card':'•••• 6618','flag':'Mastercard','merchant':'Mercado Livre','cat':'ecommerce','icon':'🟡','catLabel':'Eletrônicos','payment':'prazo','parcelas':'4x R$ 112,25','status':'aprovada','value':449.00},
+    { date:'08/08/2026','time':'20:00','card':'•••• 6618','flag':'Mastercard','merchant':'Spotify','cat':'assinatura','icon':'🎵','catLabel':'Games','payment':'avista','parcelas':null,'status':'aprovada','value':21.90},
+    { date:'07/08/2026','time':'09:15','card':'•••• 6618','flag':'Mastercard','merchant':'Hortifruti','cat':'supermercado','icon':'🥦','catLabel':'Alimentos & Bebidas','payment':'avista','parcelas':null,'status':'aprovada','value':96.40},
+    { date:'06/08/2026','time':'17:45','card':'•••• 6618','flag':'Mastercard','merchant':'Uber','cat':'mobilidade','icon':'🚗','catLabel':'Automotivo','payment':'avista','parcelas':null,'status':'aprovada','value':38.70},
+    { date:'05/08/2026','time':'12:30','card':'•••• 6618','flag':'Mastercard','merchant':'Magazine Luiza','cat':'ecommerce','icon':'🛍️','catLabel':'Eletrônicos','payment':'prazo','parcelas':'8x R$ 74,88','status':'aprovada','value':599.00},
+  ],
+  };
 
+  let transactions = [...allTransactions.conrado];
   let filtered = [...transactions];
 
   function statusBadge(s) {
@@ -901,6 +1034,24 @@
   function filterPayment(val) { activePayment = val; applyFilters(); }
   function filterStatus(val)  { activeStatus  = val; applyFilters(); }
   function filterSearch(val)  { searchVal = val; applyFilters(); }
+
+  function switchPersona(key) {
+    currentPersonaKey = key;
+    currentPersona = personas[key];
+    transactions = [...allTransactions[key]];
+    filtered = [...transactions];
+
+    // Atualiza card do cliente
+    document.getElementById('clientAvatar').textContent = currentPersona.initials;
+    document.getElementById('clientName').textContent = currentPersona.nome;
+    document.getElementById('clientId').textContent = 'ID #' + currentPersona.id.slice(-8);
+
+    // Atualiza subtítulo do modal
+    const modalSub = document.querySelector('#eventModal div div div:nth-child(2)');
+    if (modalSub) modalSub.textContent = 'Cartão ' + currentPersona.cartao + ' · ' + currentPersona.nome;
+
+    applyFilters();
+  }
 
   renderRows(transactions);
 </script>
@@ -1058,11 +1209,11 @@
     // Payload para a Ingestion API
     const payload = {
       transaction_id:       crypto.randomUUID(),
-      individual_id:        '84721903',
-      nome_cliente:         'Conrado Santos',
-      numero_conta:         '027 / 12847-3',
+      individual_id:        currentPersona.id,
+      nome_cliente:         currentPersona.nome,
+      numero_conta:         currentPersona.conta,
       produto_cartao:       'Inter One',
-      numero_cartao_mascara:'•••• 4872',
+      numero_cartao_mascara: currentPersona.cartao,
       bandeira:             'Mastercard',
       event_timestamp:      now.toISOString(),
       estabelecimento:      merchant,
@@ -1090,7 +1241,7 @@
         // Adiciona linha na tabela
         transactions.unshift({
           date: dateStr, time: timeStr,
-          card: '•••• 4872', flag: 'Mastercard',
+          card: currentPersona.cartao, flag: 'Mastercard',
           merchant, cat, icon: catIcons[cat] || '🛍️',
           catLabel: catLabels[cat] || cat,
           payment: payment.value,
@@ -1109,7 +1260,7 @@
       // Fallback: se não há backend ainda, adiciona localmente mesmo assim
       transactions.unshift({
         date: dateStr, time: timeStr,
-        card: '•••• 4872', flag: 'Mastercard',
+        card: currentPersona.cartao, flag: 'Mastercard',
         merchant, cat, icon: catIcons[cat] || '🛍️',
         catLabel: catLabels[cat] || cat,
         payment: payment.value,
