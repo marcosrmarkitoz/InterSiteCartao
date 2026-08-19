@@ -1,10 +1,14 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/ingest.js", "use": "@vercel/node" }
+    { "src": "api/ingest.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "*.png", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/ingest", "dest": "/api/ingest.js" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/(.*\\.png)", "dest": "/$1" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
