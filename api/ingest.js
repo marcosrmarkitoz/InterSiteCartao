@@ -1,32 +1,24 @@
 // Vercel Serverless Function — /api/ingest
-// Replica exatamente o fluxo de auth do app Flutter (inter_app):
-//   1. JWT Bearer → Core Access Token  (login.salesforce.com)
-//   2. Core Token → CDP Token          (coreInstanceUrl/services/a360/token)
-//   3. POST Data Cloud Ingestion API   (dataCloudInstanceUrl/api/v1/ingest/sources/...)
-//
-// Dataset novo: transacao_cartao_credito
-// ingestSource: MobileAppTrackingEvents  (mesmo do app)
-
 import crypto from 'crypto';
 
-// ── Variáveis de ambiente (configurar no Vercel) ─────────────────────────────
 const {
-  SF_CLIENT_ID,           // Connected App consumer key
-  SF_USER_NAME,           // Username JWT sub
-  SF_PRIVATE_KEY,         // Conteúdo do host_rsa.key (PEM, \n reais)
-  SF_LOGIN_URL,           // https://login.salesforce.com
-  SF_CORE_INSTANCE_URL,   // https://storm-fc56eb8d8955c3.my.salesforce.com
-  SF_DATA_CLOUD_URL,      // https://mq2wknztmjrdkyjygzqwkyjwgm.c360a.salesforce.com
-  SF_INGEST_SOURCE,       // MobileAppTrackingEvents
-  SF_DATASET,             // transacao_cartao_credito
+  SF_CLIENT_ID,
+  SF_USER_NAME,
+  SF_PRIVATE_KEY,
+  SF_LOGIN_URL,
+  SF_CORE_INSTANCE_URL,
+  SF_DATA_CLOUD_URL,
+  SF_INGEST_SOURCE,
+  SF_DATASET,
 } = process.env;
 
-// ── Utilitários JWT ───────────────────────────────────────────────────────────
 function b64url(buf) {
   return Buffer.from(buf).toString('base64url');
 }
 
 function buildJwt() {
+  // Fix: replace literal \n with real newlines in private key
+  const privateKey = SF_PRIVATE_KEY.replace(/\\n/g, '\n');
   const header  = b64url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
   const now     = Math.floor(Date.now() / 1000);
   const payload = b64url(JSON.stringify({
@@ -38,13 +30,13 @@ function buildJwt() {
   const signingInput = `${header}.${payload}`;
   const sign = crypto.createSign('RSA-SHA256');
   sign.update(signingInput);
-  const sig = sign.sign(SF_PRIVATE_KEY, 'base64url');
+  const sig = sign.sign(privateKey, 'base64url');
   return `${signingInput}.${sig}`;
 }
 
-// ── Passo 1: Core Access Token via JWT Bearer ─────────────────────────────────
 async function getCoreToken() {
   const jwt = buildJwt();
+  console.log('[ingest] requesting core token...');
   const res = await fetch(`${SF_LOGIN_URL}/services/oauth2/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -53,13 +45,15 @@ async function getCoreToken() {
       assertion: jwt,
     }),
   });
-  if (!res.ok) throw new Error(`Core token failed: ${await res.text()}`);
-  return (await res.json()).access_token;
+  const text = await res.text();
+  if (!res.ok) throw new Error(`Core token failed (${res.status}): ${text}`);
+  console.log('[ingest] core token OK');
+  return JSON.parse(text).access_token;
 }
 
-// ── Passo 2: CDP Token via token exchange ──────────────────────────────────────
 async function getCdpToken() {
   const coreToken = await getCoreToken();
+  console.log('[ingest] requesting CDP token...');
   const res = await fetch(`${SF_CORE_INSTANCE_URL}/services/a360/token`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -69,13 +63,15 @@ async function getCdpToken() {
       subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
     }),
   });
-  if (!res.ok) throw new Error(`CDP token failed: ${await res.text()}`);
-  return (await res.json()).access_token;
+  const text = await res.text();
+  if (!res.ok) throw new Error(`CDP token failed (${res.status}): ${text}`);
+  console.log('[ingest] CDP token OK');
+  return JSON.parse(text).access_token;
 }
 
-// ── Passo 3: Ingestion API ─────────────────────────────────────────────────────
 async function sendToDataCloud(cdpToken, record) {
   const url = `${SF_DATA_CLOUD_URL}/api/v1/ingest/sources/${SF_INGEST_SOURCE}/${SF_DATASET}`;
+  console.log('[ingest] sending to:', url);
   const res = await fetch(url, {
     method: 'POST',
     headers: {
@@ -84,11 +80,12 @@ async function sendToDataCloud(cdpToken, record) {
     },
     body: JSON.stringify({ data: [record] }),
   });
-  if (res.status !== 202) throw new Error(`Ingest failed ${res.status}: ${await res.text()}`);
+  const text = await res.text();
+  if (res.status !== 202) throw new Error(`Ingest failed (${res.status}): ${text}`);
+  console.log('[ingest] ingest OK 202');
   return true;
 }
 
-// ── Handler principal ──────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -113,7 +110,7 @@ export default async function handler(req, res) {
     await sendToDataCloud(cdpToken, record);
     return res.status(200).json({ message: 'Evento enviado com sucesso', transaction_id: record.transaction_id });
   } catch (e) {
-    console.error('[ingest] erro:', e.message);
+    console.error('[ingest] ERRO:', e.message);
     return res.status(502).json({ message: 'Erro ao enviar ao Data Cloud', detail: e.message });
   }
 }
