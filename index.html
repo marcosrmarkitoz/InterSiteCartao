@@ -672,11 +672,11 @@
         </div>
         <div class="meta-row">
           <span class="meta-key">Limite total</span>
-          <span class="meta-val">R$ 12.000,00</span>
+          <span class="meta-val" id="clientLimite">R$ 12.000,00</span>
         </div>
         <div class="meta-row">
           <span class="meta-key">Disponível</span>
-          <span class="meta-val" style="color:var(--green)">R$ 8.234,15</span>
+          <span class="meta-val" id="clientDisponivel" style="color:var(--green)">R$ 8.234,15</span>
         </div>
       </div>
     </div>
@@ -1050,6 +1050,8 @@
     document.getElementById('clientAvatar').textContent = currentPersona.initials;
     document.getElementById('clientName').textContent = currentPersona.nome;
     document.getElementById('clientId').textContent = 'ID #' + currentPersona.id.slice(-8);
+    document.getElementById('clientLimite').textContent = currentPersona.limite;
+    document.getElementById('clientDisponivel').textContent = currentPersona.disponivel;
 
     // Atualiza subtítulo do modal
     const modalSub = document.querySelector('#eventModal div div div:nth-child(2)');
