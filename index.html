@@ -708,13 +708,18 @@
       <div class="label">Filtrar por categoria</div>
       <div class="filter-tags">
         <span class="tag active" onclick="filterCategory(this,'all')">Todos</span>
-        <span class="tag" onclick="filterCategory(this,'alimentacao')">🍔 Gourmet & Vinhos</span>
-        <span class="tag" onclick="filterCategory(this,'supermercado')">🛒 Alimentos & Bebidas</span>
-        <span class="tag" onclick="filterCategory(this,'ecommerce')">🛍️ Eletrônicos</span>
-        <span class="tag" onclick="filterCategory(this,'esporte')">🏃 Esporte & Fitness</span>
-        <span class="tag" onclick="filterCategory(this,'mobilidade')">🚗 Automotivo</span>
-        <span class="tag" onclick="filterCategory(this,'assinatura')">🎮 Games</span>
-        <span class="tag" onclick="filterCategory(this,'farmacia')">💊 Saúde & Bem-estar</span>
+        <span class="tag" onclick="filterCategory(this,'supermercado')">🛒 Supermercado</span>
+        <span class="tag" onclick="filterCategory(this,'combustivel')">⛽ Combustível</span>
+        <span class="tag" onclick="filterCategory(this,'farmacia')">💊 Farmácia</span>
+        <span class="tag" onclick="filterCategory(this,'alimentacao')">🍔 Restaurante / iFood</span>
+        <span class="tag" onclick="filterCategory(this,'roupas')">👗 Loja de roupas</span>
+        <span class="tag" onclick="filterCategory(this,'petshop')">🐾 Pet shop</span>
+        <span class="tag" onclick="filterCategory(this,'eletronicos')">📱 Eletrônicos</span>
+        <span class="tag" onclick="filterCategory(this,'esporte')">🏃 Academia / Esportes</span>
+        <span class="tag" onclick="filterCategory(this,'viagem')">✈️ Viagem</span>
+        <span class="tag" onclick="filterCategory(this,'streaming')">🎬 Streaming</span>
+        <span class="tag" onclick="filterCategory(this,'educacao')">📚 Educação</span>
+        <span class="tag" onclick="filterCategory(this,'construcao')">🔨 Construção</span>
       </div>
     </div>
 
@@ -1081,13 +1086,18 @@
         <label style="font-size:12px;font-weight:600;color:#666;display:block;margin-bottom:5px">Categoria</label>
         <select id="ev_cat" style="width:100%;padding:10px 12px;border:1.5px solid #e8e8e8;border-radius:10px;font-size:14px;outline:none;background:#fff;cursor:pointer;box-sizing:border-box" onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#e8e8e8'">
           <option value="">Selecione...</option>
-          <option value="alimentacao">🍔 Alimentação / Delivery</option>
           <option value="supermercado">🛒 Supermercado</option>
-          <option value="ecommerce">🛍️ E-commerce</option>
-          <option value="esporte">🏃 Esportes</option>
-          <option value="mobilidade">🚗 Mobilidade</option>
-          <option value="assinatura">📱 Assinaturas</option>
+          <option value="combustivel">⛽ Posto de combustível</option>
           <option value="farmacia">💊 Farmácia</option>
+          <option value="alimentacao">🍔 Restaurante / iFood</option>
+          <option value="roupas">👗 Loja de roupas</option>
+          <option value="petshop">🐾 Pet shop</option>
+          <option value="eletronicos">📱 Eletrônicos / Tech</option>
+          <option value="esporte">🏃 Academia / Esportes</option>
+          <option value="viagem">✈️ Viagem / Cia aérea</option>
+          <option value="streaming">🎬 Streaming (Netflix, Spotify)</option>
+          <option value="educacao">📚 Educação / Livraria</option>
+          <option value="construcao">🔨 Construção / Home center</option>
         </select>
       </div>
 
@@ -1203,8 +1213,8 @@
     const n         = isParc ? parseInt(preview.dataset.n) : null;
     const parcStr   = isParc ? n + 'x R$ ' + (value / n).toFixed(2).replace('.', ',') : null;
 
-    const catIcons = {alimentacao:'🍔',supermercado:'🛒',ecommerce:'🛍️',esporte:'🏃',mobilidade:'🚗',assinatura:'📱',farmacia:'💊'};
-    const catLabels = {alimentacao:'Alimentação',supermercado:'Supermercado',ecommerce:'E-commerce',esporte:'Esportes',mobilidade:'Mobilidade',assinatura:'Assinatura',farmacia:'Farmácia'};
+    const catIcons = {supermercado:'🛒',combustivel:'⛽',farmacia:'💊',alimentacao:'🍔',roupas:'👗',petshop:'🐾',eletronicos:'📱',esporte:'🏃',viagem:'✈️',streaming:'🎬',educacao:'📚',construcao:'🔨'};
+    const catLabels = {supermercado:'Supermercado',combustivel:'Posto de combustível',farmacia:'Farmácia',alimentacao:'Restaurante / iFood',roupas:'Loja de roupas',petshop:'Pet shop',eletronicos:'Eletrônicos / Tech',esporte:'Academia / Esportes',viagem:'Viagem / Cia aérea',streaming:'Streaming',educacao:'Educação / Livraria',construcao:'Construção / Home center'};
 
     // Payload para a Ingestion API
     const payload = {
