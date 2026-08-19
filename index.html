@@ -686,20 +686,20 @@
       <div class="label">Resumo — Agosto/2026</div>
       <div class="stat-item">
         <div class="stat-label">Total gasto no período</div>
-        <div class="stat-value orange">R$ 8.463,05</div>
-        <div class="stat-bar-wrap"><div class="stat-bar" style="width:68%"></div></div>
+        <div class="stat-value orange" id="statTotal">R$ 8.463,05</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="statBar" style="width:68%"></div></div>
       </div>
       <div class="stat-item">
         <div class="stat-label">Transações aprovadas</div>
-        <div class="stat-value">35</div>
+        <div class="stat-value" id="statCount">35</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">À vista</div>
-        <div class="stat-value green">R$ 1.984,40</div>
+        <div class="stat-value green" id="statAvista">R$ 1.984,40</div>
       </div>
       <div class="stat-item">
         <div class="stat-label">Parcelado</div>
-        <div class="stat-value" style="color:var(--orange)">R$ 5.011,55</div>
+        <div class="stat-value" id="statPrazo" style="color:var(--orange)">R$ 5.011,55</div>
       </div>
     </div>
 
@@ -1040,6 +1040,23 @@
   function filterStatus(val)  { activeStatus  = val; applyFilters(); }
   function filterSearch(val)  { searchVal = val; applyFilters(); }
 
+  function fmtBRL(v) {
+    return 'R$ ' + v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  function updateStats(txList) {
+    const approved = txList.filter(t => t.status === 'aprovada');
+    const total = approved.reduce((s,t) => s + t.value, 0);
+    const avista = approved.filter(t => t.payment === 'avista').reduce((s,t) => s + t.value, 0);
+    const prazo  = approved.filter(t => t.payment === 'prazo').reduce((s,t) => s + t.value, 0);
+    const maxLimit = 25000;
+    document.getElementById('statTotal').textContent = fmtBRL(total);
+    document.getElementById('statCount').textContent = approved.length;
+    document.getElementById('statAvista').textContent = fmtBRL(avista);
+    document.getElementById('statPrazo').textContent = fmtBRL(prazo);
+    document.getElementById('statBar').style.width = Math.min(100, Math.round(total / maxLimit * 100)) + '%';
+  }
+
   function switchPersona(key) {
     currentPersonaKey = key;
     currentPersona = personas[key];
@@ -1052,6 +1069,7 @@
     document.getElementById('clientId').textContent = 'ID #' + currentPersona.id.slice(-8);
     document.getElementById('clientLimite').textContent = currentPersona.limite;
     document.getElementById('clientDisponivel').textContent = currentPersona.disponivel;
+    updateStats(transactions);
 
     // Atualiza subtítulo do modal
     const modalSub = document.querySelector('#eventModal div div div:nth-child(2)');
@@ -1060,6 +1078,7 @@
     applyFilters();
   }
 
+  updateStats(transactions);
   renderRows(transactions);
 </script>
 
