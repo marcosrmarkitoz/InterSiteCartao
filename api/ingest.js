@@ -105,6 +105,7 @@ export default async function handler(req, res) {
   const record = {
     ...body,
     event_timestamp: body.event_timestamp || new Date().toISOString(),
+    individual_id: '003Ws00000Q4nxFIAR',
   };
 
   try {
